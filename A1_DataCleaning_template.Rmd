@@ -5,6 +5,8 @@ date: "[FILL IN THE DATE]"
 output: html_document
 ---
 
+
+#Testing change
 # Assignment 1, Language development in Autism Spectrum Disorder (ASD) - Brushing up your code skills
 
 In this first part of the assignment we will brush up your programming skills, and make you familiar with the data sets you will be analysing for the next parts of the assignment.
@@ -70,6 +72,13 @@ Load the three data sets, after downloading them from dropbox and saving them in
 * Word data: https://www.dropbox.com/s/8ng1civpl2aux58/token_train.csv?dl=0
 
 ```{r}
+demo_train <- read.csv("demo_train.csv")
+LU_train <- read.csv("LU_train.csv")
+token_train <- read.csv("token_train.csv")
+
+demo_train <- arrange(demo_train, VinelandStandardScore)
+ggplot(demo_train, aes(Child.ID, VinelandStandardScore))+
+  geom_bar(stat ="summary", fun.data ="mean_se")
 
 ```
 
