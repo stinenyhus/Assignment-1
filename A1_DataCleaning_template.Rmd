@@ -72,8 +72,6 @@ Load the three data sets, after downloading them from dropbox and saving them in
 * Word data: https://www.dropbox.com/s/8ng1civpl2aux58/token_train.csv?dl=0
 
 ```{r}
-p_load(ggplot2)
-
 demo_train <- read.csv("demo_train.csv")
 LU_train <- read.csv("LU_train.csv")
 token_train <- read.csv("token_train.csv")
@@ -101,6 +99,10 @@ Tip: look through the chapter on data transformation in R for data science (http
 
 
 ```{r}
+#Changing column names in demo_train 
+
+colnames(demo_train)[1] <- "SUBJ"
+colnames(demo_train)[2] <- "VISIT"
 
 ```
 
@@ -110,7 +112,11 @@ Tip: The stringr package is what you need. str_extract () will allow you to extr
 
 
 ```{r}
+#Homogenizing the numbers in the columns 
 
+#This line of code says: take this column and make it <- extract from the string(in this column, the regular expression for numbers) --> "\\d" apparently means all numbers 
+LU_train$VISIT <- stringr::str_extract(LU_train$VISIT, regex("\\d"))
+token_train$VISIT <- stringr::str_extract(token_train$VISIT, regex("\\d"))
 
 ```
 
@@ -122,7 +128,9 @@ Tip: You can either have one line of code for each child name that is to be chan
 
 
 ```{r}
-
+LU_train$SUBJ <- str_replace_all(LU_train$SUBJ, "\\.", "")
+token_train$SUBJ <- str_replace_all(token_train$SUBJ, "\\.", "")
+demo_train$SUBJ <- str_replace_all(demo_train$SUBJ, "\\.", "")
 ```
 
 2d. Now that the nitty gritty details of the different data sets are fixed, we want to make a subset of each data set only containig the variables that we wish to use in the final data set.
@@ -158,7 +166,12 @@ Most variables should make sense, here the less intuitive ones.
 Feel free to rename the variables into something you can remember (i.e. nonVerbalIQ, verbalIQ)
 
 ```{r}
+sub_demo_train <- select(demo_train, SUBJ, VISIT, Diagnosis, Ethnicity, Gender, Age, ADOS, MullenRaw,
+                         ExpressiveLangRaw, Socialization)
 
+sub_token_train <- select(token_train, SUBJ, VISIT, types_MOT, types_CHI, tokens_MOT, tokens_CHI)
+
+sub_LU_train <- select(LU_train, SUBJ, VISIT, MOT_MLU, CHI_MLU)
 ```
 
 2e. Finally we are ready to merge all the data sets into just one. 
@@ -168,7 +181,8 @@ Some things to pay attention to:
 * make sure to understand whether (and if so why) there are NAs in the dataset (e.g. some measures were not taken at all visits, some recordings were lost or permission to use was withdrawn)
 
 ```{r}
-
+token_LU <- merge(sub_token_train, sub_LU_train, by=c("SUBJ","VISIT"), all = TRUE)
+merged_data<- merge(token_LU, sub_demo_train, by=c("SUBJ","VISIT"), all = TRUE)
 
 ```
 
@@ -184,7 +198,17 @@ A possible way to do so:
 
 
 ```{r}
+#Making new dataset 
+visit1_df <- merged_data %>% select(SUBJ, VISIT, ADOS, MullenRaw, ExpressiveLangRaw, Socialization) %>% filter(VISIT == "1")
 
+colnames(visit1_df)[3] <- "ADOSv1"
+colnames(visit1_df)[4] <- "MullenRawv1"
+colnames(visit1_df)[5] <- "ExpressiveLangRawv1"
+colnames(visit1_df)[6] <- "Socializationv1"
+
+visit1_df <- select(visit1_df,-VISIT)
+
+merged_data2 <- merge(merged_data, visit1_df, by = "SUBJ")
 ```
 
 2g. Final touches
@@ -195,7 +219,17 @@ Now we want to
 * Save the data set using into a csv file. Hint: look into write.csv()
 
 ```{r}
+#Changing gender 
+merged_data2$Gender <- ifelse(merged_data2$Gender == "1", "M", "F")
 
+#Anonymizing the participants 
+merged_data2$SUBJ <- as.factor(merged_data2$SUBJ)
+merged_data2$SUBJ <- factor(as.numeric(merged_data2$SUBJ))
+
+#Changing diagnosis to more meaningful
+merged_data2$Diagnosis <- ifelse(merged_data2$Diagnosis == "A", "ASD", "TD")
+
+write.csv(merged_data2, file = "AutismClean.csv")
 ```
 
 
