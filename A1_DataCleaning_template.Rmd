@@ -63,7 +63,7 @@ If you're not in a project in Rstudio, make sure to set your working directory h
 If you created an RStudio project, then your working directory (the directory with your data and code for these assignments) is the project directory.
 
 ```{r}
-pacman::p_load(tidyverse,janitor)
+pacman::p_load(tidyverse,janitor,ggplot2)
 ```
 
 Load the three data sets, after downloading them from dropbox and saving them in your working directory:
@@ -72,6 +72,8 @@ Load the three data sets, after downloading them from dropbox and saving them in
 * Word data: https://www.dropbox.com/s/8ng1civpl2aux58/token_train.csv?dl=0
 
 ```{r}
+p_load(ggplot2)
+
 demo_train <- read.csv("demo_train.csv")
 LU_train <- read.csv("LU_train.csv")
 token_train <- read.csv("token_train.csv")
