@@ -247,8 +247,10 @@ List all kids who:
 3. have not completed all trials. Tip: Use pipes to solve this
 
 ```{r}
-
-
+long_LMU <- filter(merged_data2, CHI_MLU>2.7)
+long_LMU
+MLU2 <- filter(merged_data2, CHI_MLU<1.5 & VISIT =="1")
+MLU2
 ```
 
 
@@ -258,6 +260,8 @@ USING ARRANGE
 2. Sort kids to find the kid who produced the least amount of words on the 1st visit.
 
 ```{r}
+arrange(merged_data2, desc(VISIT), desc(tokens_CHI)) #Kid number 59 produced most words at second visti
+arrange(merged_data2, VISIT, tokens_CHI) #Kid number 61 produced no words at first visit 
 
 
 ```
@@ -268,6 +272,10 @@ USING SELECT
 2. What happens if you include the name of a variable multiple times in a select() call?
 
 ```{r}
+ASD_MLU_tokens <- merged_data2 %>% filter(Diagnosis =="ASD") %>% select(SUBJ, VISIT, Diagnosis, CHI_MLU, tokens_CHI)
+
+test <- select(merged_data2, SUBJ, VISIT, SUBJ, Diagnosis)
+#Nothing seems to happen if you include a variable more than one time, it is only included once in the selected dataframe
 
 ```
 
@@ -278,6 +286,7 @@ USING MUTATE, SUMMARISE and PIPES
 3. The solution to task above enables us to assess the average amount of words produced by each child. Why don't we just use these average values to describe the language production of the children? What is the advantage of keeping all the data?
 
 ```{r}
+#1 adding column 
 
 
 ```
