@@ -168,8 +168,7 @@ Most variables should make sense, here the less intuitive ones.
 Feel free to rename the variables into something you can remember (i.e. nonVerbalIQ, verbalIQ)
 
 ```{r}
-sub_demo_train <- select(demo_train, SUBJ, VISIT, Diagnosis, Ethnicity, Gender, Age, ADOS, MullenRaw,
-                         ExpressiveLangRaw, Socialization)
+sub_demo_train <- select(demo_train, SUBJ, VISIT, Diagnosis, Ethnicity, Gender, Age, ADOS, MullenRaw,ExpressiveLangRaw, Socialization)
 
 sub_token_train <- select(token_train, SUBJ, VISIT, types_MOT, types_CHI, tokens_MOT, tokens_CHI)
 
@@ -183,8 +182,8 @@ Some things to pay attention to:
 * make sure to understand whether (and if so why) there are NAs in the dataset (e.g. some measures were not taken at all visits, some recordings were lost or permission to use was withdrawn)
 
 ```{r}
-token_LU <- merge(sub_token_train, sub_LU_train, by=c("SUBJ","VISIT"), all = TRUE)
-merged_data<- merge(token_LU, sub_demo_train, by=c("SUBJ","VISIT"), all = TRUE)
+token_LU <- merge(sub_token_train, sub_LU_train, by=c("SUBJ","VISIT"))
+merged_data<- merge(token_LU, sub_demo_train, by=c("SUBJ","VISIT"))
 
 ```
 
@@ -211,6 +210,7 @@ colnames(visit1_df)[6] <- "Socializationv1"
 visit1_df <- select(visit1_df,-VISIT)
 
 merged_data2 <- merge(merged_data, visit1_df, by = "SUBJ")
+
 ```
 
 2g. Final touches
